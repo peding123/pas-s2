@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 12, 2023 at 02:02 AM
--- Server version: 10.4.27-MariaDB
--- PHP Version: 8.1.12
+-- Generation Time: May 21, 2023 at 04:39 PM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,20 +28,15 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `masyarakat` (
+  `id_masyarakat` int(5) NOT NULL,
   `nik` char(16) NOT NULL,
   `nama` varchar(35) NOT NULL,
   `username` varchar(25) NOT NULL,
   `password` varchar(32) NOT NULL,
-  `telp` varchar(13) NOT NULL
+  `telp` varchar(13) NOT NULL,
+  `level` enum('Masyarakat') NOT NULL,
+  `foto_masyarakat` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `masyarakat`
---
-
-INSERT INTO `masyarakat` (`nik`, `nama`, `username`, `password`, `telp`) VALUES
-('4121014550799550', 'Mohamad Ferdiansyah', 'ferdi', '1f2ef40e3ad6fa16b08b615217876b8a', '083851522259'),
-('7448114331171120', 'Rafli Yusuf Aldani', 'rafli', '79ece3a5487d0945cd1cd28a2b483c84', '082260591451');
 
 -- --------------------------------------------------------
 
@@ -56,7 +51,7 @@ CREATE TABLE `module` (
   `static_content` text NOT NULL,
   `gambar` varchar(100) NOT NULL,
   `publish` enum('Y','N') NOT NULL,
-  `status` enum('Petugas','Admin') NOT NULL,
+  `status` enum('Petugas','Admin','Masyarakat','All') NOT NULL,
   `aktif` enum('Y','N') NOT NULL,
   `urutan` int(8) NOT NULL,
   `link_seo` varchar(100) NOT NULL
@@ -67,15 +62,14 @@ CREATE TABLE `module` (
 --
 
 INSERT INTO `module` (`id_modul`, `nama_modul`, `link`, `static_content`, `gambar`, `publish`, `status`, `aktif`, `urutan`, `link_seo`) VALUES
-(1, 'User', '?module=datauser', 'Hello', '', 'Y', 'Admin', 'Y', 3, ''),
 (2, 'Petugas', '?module=datapetugas', 'Hello', '', 'Y', 'Admin', 'Y', 5, ''),
-(3, 'Home', '?module=home', 'Hello', '', 'Y', 'Petugas', 'Y', 2, ''),
+(3, 'Home', '?module=home', 'Hello', '', 'Y', 'All', 'Y', 2, ''),
 (4, 'Pengaduan', '?module=pengaduan', 'Hello', '', 'Y', 'Petugas', 'Y', 6, ''),
 (5, 'Tanggapan', '?module=tanggapan', 'Hello', '', 'Y', 'Petugas', 'Y', 7, ''),
-(6, 'Berita', '?module=berita', 'Hello', '', 'Y', 'Petugas', 'Y', 9, ''),
 (7, 'Masyarakat', '?module=datamasyarakat', 'Hello', '', 'Y', 'Admin', 'Y', 4, ''),
-(8, 'Menu', '?module=menu', 'Hello', '', 'Y', 'Petugas', 'Y', 8, ''),
-(9, 'Dashboard', '?module=dashboard', 'Hello', '', 'Y', 'Admin', 'Y', 1, '');
+(9, 'Dashboard', '?module=dashboard', 'Hello', '', 'Y', 'All', 'Y', 1, ''),
+(10, 'Pengaduan', '?module=pmasyarakat', 'Hello', '', 'Y', 'Masyarakat', 'Y', 8, ''),
+(11, 'Tanggapan', '?module=tmasyarakat', 'Hello', '', 'Y', 'Masyarakat', 'Y', 9, '');
 
 -- --------------------------------------------------------
 
@@ -87,9 +81,10 @@ CREATE TABLE `pengaduan` (
   `id_pengaduan` int(11) NOT NULL,
   `tgl_pengaduan` date NOT NULL,
   `nik` char(16) NOT NULL,
+  `judul` varchar(30) NOT NULL,
   `isi_laporan` text NOT NULL,
   `foto` varchar(255) NOT NULL,
-  `status` enum('0','proses','selesai') NOT NULL
+  `status` enum('Proses','Selesai') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -104,18 +99,18 @@ CREATE TABLE `petugas` (
   `username` varchar(25) NOT NULL,
   `password` varchar(32) NOT NULL,
   `telp` varchar(13) NOT NULL,
-  `level` enum('Admin','Petugas') NOT NULL
+  `level` enum('Admin','Petugas') NOT NULL,
+  `foto_petugas` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `petugas`
 --
 
-INSERT INTO `petugas` (`id_petugas`, `nama_petugas`, `username`, `password`, `telp`, `level`) VALUES
-(1, 'Mohamad Ferdiansyah', 'admin', '0192023a7bbd73250516f069df18b500', '083851522259', 'Admin'),
-(2, 'Maftuh Romadhon', 'maftuh', '6ad14ba9986e3615423dfca256d04e3f', '088296142969', 'Petugas'),
-(4, 'Angga Duwi Priyatna', 'angga123', '1fd5cd9766249f170035b7251e2c6b61', '085714798183', 'Petugas'),
-(12, 'Wildan Satya Nugrahadi', 'wildan', 'af6b3aa8c3fcd651674359f500814679', '0895385909547', 'Petugas');
+INSERT INTO `petugas` (`id_petugas`, `nama_petugas`, `username`, `password`, `telp`, `level`, `foto_petugas`) VALUES
+(30, 'Mohamad Ferdiansyah', 'admin', '21232f297a57a5a743894a0e4a801fc3', '083851522259', 'Admin', 'Master (1).png'),
+(32, 'Nico Gunawan Purba', 'nico', '4118af4d1a8ac07d93f11ce4f3bf1f58', '087889225660', 'Petugas', 'Gold (1).png'),
+(34, 'Muhammad Ali Irfan', 'ali', '984d8144fa08bfc637d2825463e184fa', '081282741310', 'Petugas', 'Diamond (1).png');
 
 -- --------------------------------------------------------
 
@@ -139,7 +134,8 @@ CREATE TABLE `tanggapan` (
 -- Indexes for table `masyarakat`
 --
 ALTER TABLE `masyarakat`
-  ADD PRIMARY KEY (`nik`);
+  ADD PRIMARY KEY (`nik`),
+  ADD KEY `id_masyarakat` (`id_masyarakat`);
 
 --
 -- Indexes for table `module`
@@ -173,28 +169,34 @@ ALTER TABLE `tanggapan`
 --
 
 --
+-- AUTO_INCREMENT for table `masyarakat`
+--
+ALTER TABLE `masyarakat`
+  MODIFY `id_masyarakat` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+
+--
 -- AUTO_INCREMENT for table `module`
 --
 ALTER TABLE `module`
-  MODIFY `id_modul` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id_modul` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `pengaduan`
 --
 ALTER TABLE `pengaduan`
-  MODIFY `id_pengaduan` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_pengaduan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
 
 --
 -- AUTO_INCREMENT for table `petugas`
 --
 ALTER TABLE `petugas`
-  MODIFY `id_petugas` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id_petugas` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `tanggapan`
 --
 ALTER TABLE `tanggapan`
-  MODIFY `id_tanggapan` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_tanggapan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- Constraints for dumped tables
