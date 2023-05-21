@@ -62,131 +62,135 @@ if (isset($_POST['delete'])) {
 </script>
 
 <body>
-    <div class="wrapper bg-light shadow rounded p-2">
-        <h1>Pengaduan</h1>
-        <table id="table" class="table border table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">No.</th>
-                    <th scope="col">NIK</th>
-                    <th scope="col">Nama</th>
-                    <th scope="col">Tanggal Masuk</th>
-                    <th scope="col">Judul</th>
-                    <th scope="col">Status</th>
-                    <th scope="col" class="text-center">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php $no = 1; ?>
-                <?php $query = mysqli_query($conn, "SELECT * FROM pengaduan INNER JOIN masyarakat ON pengaduan.nik=masyarakat.nik WHERE status = 'Proses' ORDER BY pengaduan.tgl_pengaduan DESC"); ?>
-                <?php while ($result = mysqli_fetch_array($query)) : ?>
+    <div class="card">
+        <div class="card-header fw-bold">
+            Pengaduan
+        </div>
+        <div class="card-body">
+            <table id="table" class="table border table-hover">
+                <thead>
                     <tr>
-                        <td><?= $no++; ?></td>
-                        <td><?= $result['nik']; ?></td>
-                        <td><?= $result['nama']; ?></td>
-                        <td><?= $result['tgl_pengaduan']; ?></td>
-                        <td><?= $result['judul']; ?></td>
-                        <td><?= $result['status']; ?></td>
-                        <td>
-                            <div class='text-center'>
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#moreModal<?= $no ?>" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a> |
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $no ?>" class="btn btn-danger"><i class="fa-solid fa-trash"></i></a>
-                            </div>
-                        </td>
+                        <th scope="col">No.</th>
+                        <th scope="col">NIK</th>
+                        <th scope="col">Nama</th>
+                        <th scope="col">Tanggal Masuk</th>
+                        <th scope="col">Judul</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="text-center">Action</th>
                     </tr>
-                    <!-- Edit Modal -->
-                    <div class="modal fade" id="moreModal<?= $no ?>" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-scrollable modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Detail</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </thead>
+                <tbody>
+                    <?php $no = 1; ?>
+                    <?php $query = mysqli_query($conn, "SELECT * FROM pengaduan INNER JOIN masyarakat ON pengaduan.nik=masyarakat.nik WHERE status = 'Proses' ORDER BY pengaduan.tgl_pengaduan DESC"); ?>
+                    <?php while ($result = mysqli_fetch_array($query)) : ?>
+                        <tr>
+                            <td><?= $no++; ?></td>
+                            <td><?= $result['nik']; ?></td>
+                            <td><?= $result['nama']; ?></td>
+                            <td><?= $result['tgl_pengaduan']; ?></td>
+                            <td><?= $result['judul']; ?></td>
+                            <td><?= $result['status']; ?></td>
+                            <td>
+                                <div class='text-center'>
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#moreModal<?= $no ?>" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a> |
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $no ?>" class="btn btn-danger"><i class="fa-solid fa-trash"></i></a>
                                 </div>
-                                <form method="POST" action="">
-                                    <div class="modal-body">
-                                        <div class="row">
-                                            <div class="col">
-                                                <p class="fw-bold">NIK : <?= $result['nik'] ?></p>
-                                                <p class="fw-bold">Dari : <?= $result['nama'] ?></p>
-                                                <p class="fw-bold">Tanggal Masuk : <?= $result['tgl_pengaduan'] ?></p>
-                                                <br>
-                                                <p class="fw-bold">Judul : <?= $result['judul'] ?></p>
-                                                <img width="300" src="src/report/img/<?php echo $result['foto']; ?>">
-                                                <br>
-                                                <br><b>Pesan</b>
-                                                <p><?= $result['isi_laporan'] ?></p>
-                                                <b>
-                                                    <p>Status : <?= $result['status'] ?></p>
-                                                </b>
-                                            </div>
-                                            <div class="col">
-                                                <?php if ($level == "Petugas") : ?>
-                                                    <?php if ($result['status'] == "Proses") : ?>
-                                                        <div class="mb-3 container">
-                                                            <label for="exampleFormControlTextarea1" class="form-label fw-bold">Tanggapan Anda</label>
-                                                            <textarea class="form-control" name="tanggapan" id="exampleFormControlTextarea1" rows="5" required></textarea>
-                                                        </div>
+                            </td>
+                        </tr>
+                        <!-- Edit Modal -->
+                        <div class="modal fade" id="moreModal<?= $no ?>" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Detail</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form method="POST" action="">
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <p class="fw-bold">NIK : <?= $result['nik'] ?></p>
+                                                    <p class="fw-bold">Dari : <?= $result['nama'] ?></p>
+                                                    <p class="fw-bold">Tanggal Masuk : <?= $result['tgl_pengaduan'] ?></p>
+                                                    <br>
+                                                    <p class="fw-bold">Judul : <?= $result['judul'] ?></p>
+                                                    <img width="300" src="src/report/img/<?php echo $result['foto']; ?>">
+                                                    <br>
+                                                    <br><b>Pesan</b>
+                                                    <p><?= $result['isi_laporan'] ?></p>
+                                                    <b>
+                                                        <p>Status : <?= $result['status'] ?></p>
+                                                    </b>
+                                                </div>
+                                                <div class="col">
+                                                    <?php if ($level == "Petugas") : ?>
+                                                        <?php if ($result['status'] == "Proses") : ?>
+                                                            <div class="mb-3 container">
+                                                                <label for="exampleFormControlTextarea1" class="form-label fw-bold">Tanggapan Anda</label>
+                                                                <textarea class="form-control" name="tanggapan" id="exampleFormControlTextarea1" rows="5" required></textarea>
+                                                            </div>
+                                                        <?php endif; ?>
                                                     <?php endif; ?>
-                                                <?php endif; ?>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <?php if ($level == "Petugas") : ?>
-                                            <button type="submit" class="btn btn-primary" name="tanggapi">Tanggapi</button>
-                                        <?php endif; ?>
-                                    </div>
-                                </form>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <?php if ($level == "Petugas") : ?>
+                                                <button type="submit" class="btn btn-primary" name="tanggapi">Tanggapi</button>
+                                            <?php endif; ?>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <!-- Edit Modal -->
+                        <!-- Edit Modal -->
 
-                    <!-- Tanggapan Modal -->
-                    <?php
-                    if (isset($_POST['tanggapi'])) {
-                        $tgl = date('Y-m-d');
-                        $query = mysqli_query($conn, "INSERT INTO tanggapan VALUES (NULL,'" . $result['id_pengaduan'] . "','" . $tgl . "','" . $_POST['tanggapan'] . "','" . $id_petugas . "')");
-                        if ($query) {
-                            $update = mysqli_query($conn, "UPDATE pengaduan SET status='Selesai' WHERE id_pengaduan='" . $result['id_pengaduan'] . "'");
-                            if ($update) {
-                                echo "<script>alert('Tanggapan berhasil terkirim!')</script>";
-                                echo "<script>location='?module=pengaduan';</script>";
+                        <!-- Tanggapan Modal -->
+                        <?php
+                        if (isset($_POST['tanggapi'])) {
+                            $tgl = date('Y-m-d');
+                            $query = mysqli_query($conn, "INSERT INTO tanggapan VALUES (NULL,'" . $result['id_pengaduan'] . "','" . $tgl . "','" . $_POST['tanggapan'] . "','" . $id_petugas . "')");
+                            if ($query) {
+                                $update = mysqli_query($conn, "UPDATE pengaduan SET status='Selesai' WHERE id_pengaduan='" . $result['id_pengaduan'] . "'");
+                                if ($update) {
+                                    echo "<script>alert('Tanggapan berhasil terkirim!')</script>";
+                                    echo "<script>location='?module=pengaduan';</script>";
+                                }
                             }
                         }
-                    }
-                    ?>
-                    <!-- Tanggapan Modal -->
+                        ?>
+                        <!-- Tanggapan Modal -->
 
-                    <!-- Delete Modal -->
-                    <div class="modal fade" id="deleteModal<?= $no ?>" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-scrollable">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Delete</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <!-- Delete Modal -->
+                        <div class="modal fade" id="deleteModal<?= $no ?>" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Delete</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form method="post" action="">
+                                        <input type="hidden" name="id_pengaduan" value="<?= $result['id_pengaduan'] ?>">
+                                        <input type="hidden" name="foto" value="<?= $result['foto'] ?>">
+                                        <div class="modal-body text-center">
+                                            <p>Apakah anda yakin ingin menghapus pengaduan ini? <br>
+                                                <span class="fw-bold text-danger"><?= $result['judul'] ?></span>
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary" name="delete">Delete</button>
+                                        </div>
+                                    </form>
                                 </div>
-                                <form method="post" action="">
-                                    <input type="hidden" name="id_pengaduan" value="<?= $result['id_pengaduan'] ?>">
-                                    <input type="hidden" name="foto" value="<?= $result['foto'] ?>">
-                                    <div class="modal-body text-center">
-                                        <p>Apakah anda yakin ingin menghapus pengaduan ini? <br>
-                                            <span class="fw-bold text-danger"><?= $result['judul'] ?></span>
-                                        </p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary" name="delete">Delete</button>
-                                    </div>
-                                </form>
                             </div>
                         </div>
-                    </div>
-                    <!-- Delete Modal -->
-                <?php endwhile; ?>
-            </tbody>
-        </table>
+                        <!-- Delete Modal -->
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 </body>
 

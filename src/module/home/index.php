@@ -24,12 +24,17 @@ if ($level == "Masyarakat") {
 </head>
 
 <body>
-    <div class="welcome text-center shadow bg-light rounded">
-        <?php if ($level == "Masyarakat") : ?>
-            <h3>Selamat datang <?= $nama; ?> <br> Untuk mengakses modul, klik pada sidebar bagian kiri!</h3>
-        <?php elseif ($level == "Admin" || $level == "Petugas") : ?>
-            <h3>Selamat datang <?= $nama_petugas; ?> <br> Untuk mengakses modul, klik pada sidebar bagian kiri!</h3>
-        <?php endif; ?>
+    <div class="card">
+        <div class="card-header fw-bold">
+            Welcome
+        </div>
+        <div class="card-body">
+            <?php if ($level == "Masyarakat") : ?>
+                <p>Selamat datang <?= $nama; ?> <br> Untuk mengakses modul, klik pada sidebar bagian kiri!</p>
+            <?php elseif ($level == "Admin" || $level == "Petugas") : ?>
+                <p>Selamat datang <?= $nama_petugas; ?> <br> Untuk mengakses modul, klik pada sidebar bagian kiri!</p>
+            <?php endif; ?>
+        </div>
     </div>
 </body>
 

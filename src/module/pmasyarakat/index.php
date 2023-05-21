@@ -1,5 +1,4 @@
 <?php
-
 include "src/config/connect.php";
 
 $level = $_SESSION['level'];
@@ -21,6 +20,29 @@ if (isset($_POST['add'])) {
 
     $direktori = "src/report/img/";
     $file_name = $_FILES['file']['name'];
+    $file_size = $_FILES['file']['size'];
+
+    $allowed_extensions = array("jpg", "jpeg", "png", "");
+    $allowed_file_size = 2 * 1024 * 1024; // 2 MB
+
+    // Validasi ekstensi file
+    $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+    if (!in_array($file_extension, $allowed_extensions)) {
+        echo "<script>
+                alert('Ekstensi file yang diunggah tidak valid. Hanya file dengan ekstensi JPG, JPEG, dan PNG yang diperbolehkan.');
+                document.location='?module=pmasyarakat';
+            </script>";
+        exit;
+    }
+
+    // Validasi ukuran file
+    if ($file_size > $allowed_file_size) {
+        echo "<script>
+                alert('Ukuran file yang diunggah melebihi batas maksimal 2 MB.');
+                document.location='?module=pmasyarakat';
+            </script>";
+        exit;
+    }
 
     if ($_FILES['file']['size'] > 0) {
         // Pengguna telah memilih untuk mengunggah gambar baru
@@ -61,31 +83,54 @@ if (isset($_POST['add'])) {
 
 // Edit
 if (isset($_POST['edit'])) {
+    $id_pengaduan = $_POST['id_pengaduan'];
     $judul = htmlspecialchars($_POST['judul']);
     $isi = htmlspecialchars($_POST['isi']);
-    $fotolama = htmlspecialchars($_POST['fotolama']);
-    $id = $_POST['id_pengaduan'];
 
     $direktori = "src/report/img/";
     $file_name = $_FILES['file']['name'];
-    move_uploaded_file($_FILES['file']['tmp_name'], $direktori . $file_name);
+    $file_size = $_FILES['file']['size'];
 
-    if (empty($_FILES['file']['name'])) {
-        $query = mysqli_query($conn, "UPDATE pengaduan SET judul = '$judul', isi_laporan = '$isi' WHERE id_pengaduan = '$id'");
-    } else {
-        unlink($direktori . $fotolama);
-        $query = mysqli_query($conn, "UPDATE pengaduan SET judul = '$judul', isi_laporan = '$isi', foto = '$file_name' WHERE id_pengaduan = '$id'");
+    $allowed_extensions = array("jpg", "jpeg", "png",);
+    $allowed_file_size = 2 * 1024 * 1024; // 2 MB
+
+    // Validasi ekstensi file
+    $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+    if (!in_array($file_extension, $allowed_extensions)) {
+        echo "<script>
+                alert('Ekstensi file yang diunggah tidak valid. Hanya file dengan ekstensi JPG, JPEG, dan PNG yang diperbolehkan.');
+                document.location='?module=pmasyarakat';
+            </script>";
+        exit;
     }
 
+    // Validasi ukuran file
+    if ($file_size > $allowed_file_size) {
+        echo "<script>
+                alert('Ukuran file yang diunggah melebihi batas maksimal 2 MB.');
+                document.location='?module=pmasyarakat';
+            </script>";
+        exit;
+    }
+
+    if ($_FILES['file']['size'] > 0) {
+        // Pengguna telah memilih untuk mengunggah gambar baru
+        if (file_exists($direktori . $file_name)) {
+            unlink($direktori . $file_name);
+        }
+        move_uploaded_file($_FILES['file']['tmp_name'], $direktori . $file_name);
+    }
+
+    $query = mysqli_query($conn, "UPDATE pengaduan SET judul = '$judul', isi_laporan = '$isi', foto = '$file_name' WHERE id_pengaduan = '$id_pengaduan'");
 
     if ($query) {
         echo "<script>
-                alert('Pengaduan berhasil dirubah!');
+                alert('Pengaduan berhasil diperbarui!');
                 document.location='?module=pmasyarakat';
             </script>";
     } else {
         echo "<script>
-                alert('Pengaduan gagal dirubah!');
+                alert('Pengaduan gagal diperbarui!');
                 document.location='?module=pmasyarakat';
             </script>";
     }
@@ -94,10 +139,11 @@ if (isset($_POST['edit'])) {
 
 // Delete
 if (isset($_POST['delete'])) {
-    $foto = htmlspecialchars($_POST['foto']);
+    $foto = $_POST['foto'];
     $direktori = "src/report/img/";
 
     unlink($direktori . $foto);
+
     $query = mysqli_query($conn, "DELETE FROM pengaduan WHERE id_pengaduan = '$_POST[id_pengaduan]'");
 
     if ($query) {
@@ -107,14 +153,14 @@ if (isset($_POST['delete'])) {
             </script>";
     } else {
         echo "<script>
-                alert('Pengaduan gagal dirubah!');
+                alert('Hapus data gagal!');
                 document.location='?module=pmasyarakat';
             </script>";
     }
 }
 // Delete
-
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -141,140 +187,159 @@ if (isset($_POST['delete'])) {
 </script>
 
 <body>
-    <div class="wrapper bg-light shadow rounded p-2">
-        <h1>Pengaduan</h1>
-        <table id="table" class="table border table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">No.</th>
-                    <th scope="col">NIK</th>
-                    <th scope="col">Nama</th>
-                    <th scope="col">Tanggal Masuk</th>
-                    <th scope="col">Judul</th>
-                    <th scope="col">Status</th>
-                    <th scope="col" class="text-center">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php $no = 1; ?>
-                <?php $query = mysqli_query($conn, "SELECT * FROM pengaduan INNER JOIN masyarakat ON pengaduan.nik=masyarakat.nik WHERE pengaduan.nik = $nik AND pengaduan.status = 'Proses' ORDER BY pengaduan.tgl_pengaduan DESC"); ?>
-                <?php while ($result = mysqli_fetch_array($query)) : ?>
+    <div class="card">
+        <div class="card-header fw-bold">
+            Pengaduan
+        </div>
+        <div class="card-body">
+            <table id="table" class="table border table-hover">
+                <thead>
                     <tr>
-                        <td><?php echo $no++; ?></td>
-                        <td><?php echo $result['nik']; ?></td>
-                        <td><?php echo $result['nama']; ?></td>
-                        <td><?php echo $result['tgl_pengaduan']; ?></td>
-                        <td><?php echo $result['judul']; ?></td>
-                        <td><?php echo $result['status']; ?></td>
-                        <td>
-                            <div class='text-center'>
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#moreModal<?= $no ?>" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a> |
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $no ?>" class="btn btn-danger"><i class="fa-solid fa-trash"></i></a>
-                            </div>
-                        </td>
+                        <th scope="col">No.</th>
+                        <th scope="col">NIK</th>
+                        <th scope="col">Nama</th>
+                        <th scope="col">Tanggal Masuk</th>
+                        <th scope="col">Judul</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="text-center">Action</th>
                     </tr>
-                    <!-- Edit Modal -->
-                    <div class="modal fade" id="moreModal<?= $no ?>" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-scrollable">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Edit</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </thead>
+                <tbody>
+                    <?php $no = 1; ?>
+                    <?php $query = mysqli_query($conn, "SELECT * FROM pengaduan INNER JOIN masyarakat ON pengaduan.nik=masyarakat.nik WHERE pengaduan.nik = $nik AND pengaduan.status = 'Proses' ORDER BY pengaduan.tgl_pengaduan DESC"); ?>
+                    <?php while ($result = mysqli_fetch_array($query)) : ?>
+                        <tr>
+                            <td><?php echo $no++; ?></td>
+                            <td><?php echo $result['nik']; ?></td>
+                            <td><?php echo $result['nama']; ?></td>
+                            <td><?php echo $result['tgl_pengaduan']; ?></td>
+                            <td><?php echo $result['judul']; ?></td>
+                            <td><?php echo $result['status']; ?></td>
+                            <td>
+                                <div class='text-center'>
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#moreModal<?= $no ?>" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a> |
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $no ?>" class="btn btn-danger"><i class="fa-solid fa-trash"></i></a>
                                 </div>
-                                <form method="post" action="" enctype="multipart/form-data">
-                                    <input type="hidden" name="id_pengaduan" value="<?= $result['id_pengaduan']; ?>">
-                                    <div class="modal-body">
-                                        <div class="form-floating mb-3">
-                                            <input type="text" class="form-control" placeholder="Judul" name="judul" value="<?= $result['judul'] ?>" required>
-                                            <label>Judul</label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <textarea type="text" class="form-control" placeholder="Isi Laporan" name="isi" style="height: 200px" required><?= $result['isi_laporan'] ?></textarea>
-                                            <label>Isi Laporan</label>
-                                        </div>
-                                        <div class="text-center mb-3">
-                                            <img width="400" src="src/report/img/<?php echo $result['foto']; ?>">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="mb-1" for="image">Tambahkan Foto</label>
-                                            <input type="file" name="file" class="form-control" id="image" value="<?= $result['foto'] ?>">
-                                            <input type="hidden" name="fotolama" value="<?= $result['foto'] ?>">
-                                        </div>
+                            </td>
+                        </tr>
+                        <!-- Edit Modal -->
+                        <div class="modal fade" id="moreModal<?= $no ?>" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Edit</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary" name="edit">Save</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Edit Modal -->
-
-                    <!-- Delete Modal -->
-                    <div class="modal fade" id="deleteModal<?= $no ?>" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-scrollable">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Delete</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <form method="post" action="" enctype="multipart/form-data">
+                                        <input type="hidden" name="id_pengaduan" value="<?= $result['id_pengaduan']; ?>">
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <div class="justify-content-center align-items-center d-flex">
+                                                    <?php if ($level == "Masyarakat") : ?>
+                                                        <img width="100" height="100" class="bg-dark rounded-circle float-end mb-3" src="src/account/img/<?php echo $result['foto_masyarakat']; ?>">
+                                                    <?php elseif ($level == "Admin" || $level == "Petugas") : ?>
+                                                        <img width="100" height="100" class="bg-dark rounded-circle float-end mb-3" src="src/account/img/<?php echo $result['foto_petugas']; ?>">
+                                                    <?php endif; ?>
+                                                </div>
+                                                <input type="file" name="file" class="form-control" id="image">
+                                                <?php if ($level == "Masyarakat") : ?>
+                                                    <input type="hidden" name="fotolama" value="<?= $result['foto_masyarakat'] ?>">
+                                                <?php elseif ($level == "Admin" || $level == "Petugas") : ?>
+                                                    <input type="hidden" name="fotolama" value="<?= $result['foto_petugas'] ?>">
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" placeholder="Judul" name="judul" value="<?= $result['judul'] ?>" required>
+                                                <label>Judul</label>
+                                            </div>
+                                            <div class="form-floating mb-3">
+                                                <textarea type="text" class="form-control" placeholder="Isi Laporan" name="isi" style="height: 200px" required><?= $result['isi_laporan'] ?></textarea>
+                                                <label>Isi Laporan</label>
+                                            </div>
+                                            <div class="text-center mb-3">
+                                                <img width="400" src="src/report/img/<?= $result['foto']; ?>">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="mb-1" for="image">Tambahkan Foto</label>
+                                                <input type="file" name="file" class="form-control" id="image" value="<?= $result['foto'] ?>">
+                                                <input type="hidden" name="fotolama" value="<?= $result['foto'] ?>">
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary" name="edit">Save</button>
+                                        </div>
+                                    </form>
                                 </div>
-                                <form method="post" action="">
-                                    <input type="hidden" name="id_pengaduan" value="<?= $result['id_pengaduan'] ?>">
-                                    <input type="hidden" name="foto" value="<?= $result['foto'] ?>">
-                                    <div class="modal-body text-center">
-                                        <p>Apakah anda yakin ingin menghapus pengaduan ini? <br>
-                                            <span class="fw-bold text-danger"><?= $result['judul'] ?></span>
-                                        </p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary" name="delete">Delete</button>
-                                    </div>
-                                </form>
                             </div>
                         </div>
-                    </div>
-                    <!-- Delete Modal -->
-                <?php endwhile; ?>
-            </tbody>
-        </table>
-        <button type="button" class="btn btn-success px-4" data-bs-toggle="modal" data-bs-target="#insertModal">
-            <i class="fa-solid fa-plus"></i></i>
-        </button>
+                        <!-- Edit Modal -->
 
-        <!-- Insert Modal -->
-        <div class="modal fade" id="insertModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-scrollable">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Add Complaint</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <!-- Delete Modal -->
+                        <div class="modal fade" id="deleteModal<?= $no ?>" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Delete</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form method="post" action="">
+                                        <input type="hidden" name="id_pengaduan" value="<?= $result['id_pengaduan'] ?>">
+                                        <input type="hidden" name="foto" value="<?= $result['foto'] ?>">
+                                        <div class="modal-body text-center">
+                                            <p>Apakah anda yakin ingin menghapus pengaduan ini? <br>
+                                                <span class="fw-bold text-danger"><?= $result['judul'] ?></span>
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary" name="delete">Delete</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Delete Modal -->
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+            <button type="button" class="btn btn-success px-4" data-bs-toggle="modal" data-bs-target="#insertModal">
+                <i class="fa-solid fa-plus"></i></i>
+            </button>
+
+            <!-- Insert Modal -->
+            <div class="modal fade" id="insertModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Add Complaint</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form method="post" action="" enctype="multipart/form-data">
+                            <div class="modal-body">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" placeholder="judul" name="judul" required>
+                                    <label>Judul Laporan</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <textarea class="form-control" placeholder="Leave a comment here" name="isi" id="floatingTextarea" style="height: 200px" required></textarea>
+                                    <label for="floatingTextarea">Isi Laporan</label>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="mb-1" for="image">Tambahkan Foto</label>
+                                    <input type="file" name="file" class="form-control" id="image">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary" name="add">Add</button>
+                            </div>
+                        </form>
                     </div>
-                    <form method="post" action="" enctype="multipart/form-data">
-                        <div class="modal-body">
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control" placeholder="judul" name="judul" required>
-                                <label>Judul Laporan</label>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <textarea class="form-control" placeholder="Leave a comment here" name="isi" id="floatingTextarea" style="height: 200px" required></textarea>
-                                <label for="floatingTextarea">Isi Laporan</label>
-                            </div>
-                            <div class="mb-3">
-                                <label class="mb-1" for="image">Tambahkan Foto</label>
-                                <input type="file" name="file" class="form-control" id="image">
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" name="add">Add</button>
-                        </div>
-                    </form>
                 </div>
             </div>
+            <!-- Insert Modal -->
         </div>
-        <!-- Insert Modal -->
     </div>
 
 </body>

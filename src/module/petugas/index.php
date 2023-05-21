@@ -106,152 +106,159 @@ if (isset($_POST['delete'])) {
 </script>
 
 <body>
-    <div class="wrapper bg-light shadow rounded p-2 my-3">
-        <h1>Data Petugas</h1>
-        <table id="table" class="table border table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">No.</th>
-                    <th scope="col">Nama Petugas</th>
-                    <th scope="col">Username</th>
-                    <th scope="col">Password</th>
-                    <th scope="col">No. Telp</th>
-                    <th scope="col">Level</th>
-                    <th scope="col" class="text-center">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php $no = 1 ?>
-                <?php while ($result = mysqli_fetch_array($row)) : ?>
+    <div class="card">
+        <div class="card-header fw-bold">
+            Petugas
+        </div>
+        <div class="card-body">
+            <table id="table" class="table border table-hover">
+                <thead>
                     <tr>
-                        <td><?= $no++ ?>.</td>
-                        <td><?= $result["nama_petugas"] ?></td>
-                        <td><?= $result["username"] ?></td>
-                        <td><?= $result["password"] ?></td>
-                        <td><?= $result["telp"] ?></td>
-                        <td><?= $result["level"] ?></td>
-                        <td>
-                            <div class='text-center'>
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#editModal<?= $no ?>" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a> |
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $no ?>" class="btn btn-danger"><i class="fa-solid fa-trash"></i></a>
-                            </div>
-                        </td>
+                        <th scope="col">No.</th>
+                        <th scope="col">Nama Petugas</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">Password</th>
+                        <th scope="col">No. Telp</th>
+                        <th scope="col">Level</th>
+                        <th scope="col" class="text-center">Action</th>
                     </tr>
-                    <!-- Edit Modal -->
-                    <div class="modal fade" id="editModal<?= $no ?>" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-scrollable">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Edit</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </thead>
+                <tbody>
+                    <?php $no = 1 ?>
+                    <?php while ($result = mysqli_fetch_array($row)) : ?>
+                        <tr>
+                            <td><?= $no++ ?>.</td>
+                            <td><?= $result["nama_petugas"] ?></td>
+                            <td><?= $result["username"] ?></td>
+                            <td><?= $result["password"] ?></td>
+                            <td><?= $result["telp"] ?></td>
+                            <td><?= $result["level"] ?></td>
+                            <td>
+                                <div class='text-center'>
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#editModal<?= $no ?>" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a> |
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $no ?>" class="btn btn-danger"><i class="fa-solid fa-trash"></i></a>
                                 </div>
-                                <form method="post" action="">
-                                    <input type="hidden" name="id_petugas" value="<?= $result['id_petugas'] ?>">
-                                    <div class="modal-body">
-                                        <div class="form-floating mb-3">
-                                            <input type="text" class="form-control" placeholder="nama_petugas" name="nama_petugas" value="<?= $result['nama_petugas'] ?>" required>
-                                            <label>nama_petugas</label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <input type="text" class="form-control" placeholder="Username" name="username" value="<?= $result['username'] ?>" required>
-                                            <label>Username</label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <input type="password" class="form-control" placeholder="Password" name="password" value="<?= $result['password'] ?>" disabled required>
-                                            <label>Password</label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <input type="number" class="form-control" placeholder="Telp" name="telp" value="<?= $result['telp'] ?>" required>
-                                            <label>Telp</label>
-                                        </div>
-                                        <select class="form-select" name="level" value="<?= $result['nama_petugas'] ?>" required>
-                                            <option value="<?= $result['level'] ?>"><?= $result['level'] ?></option>
-                                            <option value="Admin">Admin</option>
-                                            <option value="Petugas">Petugas</option>
-                                        </select>
+                            </td>
+                        </tr>
+                        <!-- Edit Modal -->
+                        <div class="modal fade" id="editModal<?= $no ?>" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Edit</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary" name="edit">Save</button>
-                                    </div>
-                                </form>
+                                    <form method="post" action="">
+                                        <input type="hidden" name="id_petugas" value="<?= $result['id_petugas'] ?>">
+                                        <div class="modal-body">
+                                            <div class="text-center mb-3">
+                                                <img class="rounded-circle bg-dark" width="50" height="50" src="src/account/img/<?= $result['foto_petugas'] ?>">
+                                            </div>
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" placeholder="nama_petugas" name="nama_petugas" value="<?= $result['nama_petugas'] ?>" required>
+                                                <label>Nama</label>
+                                            </div>
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" placeholder="Username" name="username" value="<?= $result['username'] ?>" required>
+                                                <label>Username</label>
+                                            </div>
+                                            <div class="form-floating mb-3">
+                                                <input type="password" class="form-control" placeholder="Password" name="password" value="<?= $result['password'] ?>" disabled required>
+                                                <label>Password</label>
+                                            </div>
+                                            <div class="form-floating mb-3">
+                                                <input type="number" class="form-control" placeholder="Telp" name="telp" value="<?= $result['telp'] ?>" required>
+                                                <label>Telp</label>
+                                            </div>
+                                            <select class="form-select" name="level" value="<?= $result['nama_petugas'] ?>" required>
+                                                <option value="<?= $result['level'] ?>"><?= $result['level'] ?></option>
+                                                <option value="Admin">Admin</option>
+                                                <option value="Petugas">Petugas</option>
+                                            </select>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary" name="edit">Save</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <!-- Edit Modal -->
+                        <!-- Edit Modal -->
 
-                    <!-- Delete Modal -->
-                    <div class="modal fade" id="deleteModal<?= $no ?>" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-scrollable">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Delete</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <!-- Delete Modal -->
+                        <div class="modal fade" id="deleteModal<?= $no ?>" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Delete</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form method="post" action="">
+                                        <input type="hidden" name="id_petugas" value="<?= $result['id_petugas'] ?>">
+                                        <div class="modal-body text-center">
+                                            <p>Apakah anda yakin ingin menghapus data ini? <br>
+                                                <span class="fw-bold text-danger"><?= $result['nama_petugas'] ?></span>
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary" name="delete">Delete</button>
+                                        </div>
+                                    </form>
                                 </div>
-                                <form method="post" action="">
-                                    <input type="hidden" name="id_petugas" value="<?= $result['id_petugas'] ?>">
-                                    <div class="modal-body text-center">
-                                        <p>Apakah anda yakin ingin menghapus data ini? <br>
-                                            <span class="fw-bold text-danger"><?= $result['nama_petugas'] ?></span>
-                                        </p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary" name="delete">Delete</button>
-                                    </div>
-                                </form>
                             </div>
                         </div>
-                    </div>
-                    <!-- Delete Modal -->
-                <?php endwhile; ?>
-            </tbody>
-        </table>
-        <button type="button" class="btn btn-success px-4" data-bs-toggle="modal" data-bs-target="#insertModal">
-            <i class="fa-solid fa-plus"></i></i>
-        </button>
-    </div>
+                        <!-- Delete Modal -->
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+            <button type="button" class="btn btn-success px-4" data-bs-toggle="modal" data-bs-target="#insertModal">
+                <i class="fa-solid fa-plus"></i></i>
+            </button>
+        </div>
 
-    <!-- Insert Modal -->
-    <div class="modal fade" id="insertModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <!-- Insert Modal -->
+        <div class="modal fade" id="insertModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post" action="">
+                        <div class="modal-body">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" placeholder="nama_petugas" name="nama_petugas" required>
+                                <label>Nama Petugas</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" placeholder="Username" name="username" required>
+                                <label>Username</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="password" class="form-control" placeholder="Password" name="password" required>
+                                <label>Password</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" placeholder="Telp" name="telp" required>
+                                <label>Telp</label>
+                            </div>
+                            <select class="form-select" name="level" required>
+                                <option value="Admin">Admin</option>
+                                <option value="Petugas">Petugas</option>
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" name="add">Add</button>
+                        </div>
+                    </form>
                 </div>
-                <form method="post" action="">
-                    <div class="modal-body">
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" placeholder="nama_petugas" name="nama_petugas" required>
-                            <label>nama_petugas</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" placeholder="Username" name="username" required>
-                            <label>Username</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input type="password" class="form-control" placeholder="Password" name="password" required>
-                            <label>Password</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input type="number" class="form-control" placeholder="Telp" name="telp" required>
-                            <label>Telp</label>
-                        </div>
-                        <select class="form-select" name="level" required>
-                            <option value="Admin">Admin</option>
-                            <option value="Petugas">Petugas</option>
-                        </select>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" name="add">Add</button>
-                    </div>
-                </form>
             </div>
         </div>
+        <!-- Insert Modal -->
     </div>
-    <!-- Insert Modal -->
 </body>
 
 </html>

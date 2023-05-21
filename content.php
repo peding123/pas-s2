@@ -31,3 +31,6 @@ if ($_GET['module'] == 'pmasyarakat') {
 if ($_GET['module'] == 'tmasyarakat') {
     include "src/module/tmasyarakat/index.php";
 }
+if ($_GET['module'] == 'account') {
+    include "src/module/account/index.php";
+}

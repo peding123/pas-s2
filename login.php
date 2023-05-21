@@ -30,6 +30,7 @@ if (isset($_POST["submit"])) {
             $_SESSION['nik'] = $db2['nik'];
             $_SESSION['nama'] = $db2['nama'];
             $_SESSION['username'] = $db2['username'];
+            $_SESSION['telp'] = $db2['telp'];
             $_SESSION['password'] = $db2['password'];
             $_SESSION['level'] = $db2['level'];
             header('Location: index.php?module=home');
@@ -60,11 +61,13 @@ if (isset($_POST["submit"])) {
         <div class="login-content py-5">
             <h1 class="text-center border-bottom pb-3 mb-5">Login</h1>
             <form method="post" action="">
-                <div class="mb-3">
+                <div class="mb-3 form-floating">
                     <input type="text" class="form-control" id="username" name="username" placeholder="Username">
+                    <label>Username</label>
                 </div>
-                <div class="mb-3">
+                <div class="mb-3 form-floating">
                     <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                    <label>Password</label>
                 </div>
                 <?php if (isset($error)) : ?>
                     <p style="color: #f9322c; font-style: italic;"><?= $error; ?></p>
