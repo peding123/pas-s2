@@ -233,21 +233,6 @@ if (isset($_POST['delete'])) {
                                     <form method="post" action="" enctype="multipart/form-data">
                                         <input type="hidden" name="id_pengaduan" value="<?= $result['id_pengaduan']; ?>">
                                         <div class="modal-body">
-                                            <div class="mb-3">
-                                                <div class="justify-content-center align-items-center d-flex">
-                                                    <?php if ($level == "Masyarakat") : ?>
-                                                        <img width="100" height="100" class="bg-dark rounded-circle float-end mb-3" src="src/account/img/<?php echo $result['foto_masyarakat']; ?>">
-                                                    <?php elseif ($level == "Admin" || $level == "Petugas") : ?>
-                                                        <img width="100" height="100" class="bg-dark rounded-circle float-end mb-3" src="src/account/img/<?php echo $result['foto_petugas']; ?>">
-                                                    <?php endif; ?>
-                                                </div>
-                                                <input type="file" name="file" class="form-control" id="image">
-                                                <?php if ($level == "Masyarakat") : ?>
-                                                    <input type="hidden" name="fotolama" value="<?= $result['foto_masyarakat'] ?>">
-                                                <?php elseif ($level == "Admin" || $level == "Petugas") : ?>
-                                                    <input type="hidden" name="fotolama" value="<?= $result['foto_petugas'] ?>">
-                                                <?php endif; ?>
-                                            </div>
                                             <div class="form-floating mb-3">
                                                 <input type="text" class="form-control" placeholder="Judul" name="judul" value="<?= $result['judul'] ?>" required>
                                                 <label>Judul</label>

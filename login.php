@@ -8,11 +8,11 @@ if (isset($_POST["submit"])) {
     if (empty($username) || empty($password)) {
         $empty = "Username dan password harus di isi!";
     } else {
-        $proses = mysqli_query($conn, "SELECT * FROM petugas WHERE username = '$username' AND password = '$password'");
+        $proses = mysqli_query($conn, "SELECT * FROM petugas WHERE username = '$username' AND password = '$password' AND blokir = 'No'");
         $user = mysqli_num_rows($proses);
         $db = mysqli_fetch_array($proses);
 
-        $proses2 = mysqli_query($conn, "SELECT * FROM masyarakat WHERE username = '$username' AND password = '$password'");
+        $proses2 = mysqli_query($conn, "SELECT * FROM masyarakat WHERE username = '$username' AND password = '$password' AND blokir = 'No'");
         $user2 = mysqli_num_rows($proses2);
         $db2 = mysqli_fetch_array($proses2);
 
@@ -67,7 +67,7 @@ if (isset($_POST["submit"])) {
                 </div>
                 <div class="mb-3 form-floating">
                     <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-                    <label>Password</label>
+                    <label for="password">Password</label>
                 </div>
                 <?php if (isset($error)) : ?>
                     <p style="color: #f9322c; font-style: italic;"><?= $error; ?></p>

@@ -13,38 +13,15 @@ if ($level != "Admin") {
     </script>";
 }
 
-// Add
-if (isset($_POST['add'])) {
-    $nik = htmlspecialchars($_POST['nik']);
-    $nama = htmlspecialchars($_POST['nama']);
-    $username = htmlspecialchars($_POST['username']);
-    $password = htmlspecialchars(md5($_POST['password']));
-    $telp = htmlspecialchars($_POST['telp']);
-
-    $query = mysqli_query($conn, "INSERT INTO masyarakat (nik, nama, username, password, telp) VALUES ('$nik', '$nama', '$username', '$password', '$telp')");
-
-    if ($query) {
-        echo "<script>
-                alert('Data berhasil disimpan!');
-                document.location='?module=datamasyarakat';
-            </script>";
-    } else {
-        echo "<script>
-                alert('Data gagal disimpan!');
-                document.location='?module=datamasyarakat';
-            </script>";
-    }
-}
-// Add
-
 // Edit
 if (isset($_POST['edit'])) {
     $nik = htmlspecialchars($_POST['nik']);
     $nama = htmlspecialchars($_POST['nama']);
     $username = htmlspecialchars($_POST['username']);
     $telp = htmlspecialchars($_POST['telp']);
+    $blokir = htmlspecialchars($_POST['blokir']);
 
-    $query = mysqli_query($conn, "UPDATE masyarakat SET nama = '$nama', username = '$username', telp = '$telp' WHERE nik = '$nik'");
+    $query = mysqli_query($conn, "UPDATE masyarakat SET nama = '$nama', username = '$username', telp = '$telp', blokir = '$blokir' WHERE nik = '$nik'");
 
     if ($query) {
         echo "<script>
@@ -63,7 +40,7 @@ if (isset($_POST['edit'])) {
 // Delete
 if (isset($_POST['delete'])) {
     $foto = $_POST['foto'];
-    $direktori = "src/report/img/";
+    $direktori = "src/account/img/";
 
     unlink($direktori . $foto);
 
@@ -124,6 +101,7 @@ if (isset($_POST['delete'])) {
                         <th scope="col">Username</th>
                         <th scope="col">Password</th>
                         <th scope="col">Telp</th>
+                        <th scope="col">Blokir</th>
                         <th scope="col" class="text-center">Action</th>
                     </tr>
                 </thead>
@@ -137,6 +115,7 @@ if (isset($_POST['delete'])) {
                             <td><?= $result["username"] ?></td>
                             <td><?= $result["password"] ?></td>
                             <td><?= $result["telp"] ?></td>
+                            <td><?= $result["blokir"] ?></td>
                             <td>
                                 <div class='text-center'>
                                     <a href="#" data-bs-toggle="modal" data-bs-target="#editModal<?= $no ?>" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a> |
@@ -158,26 +137,18 @@ if (isset($_POST['delete'])) {
                                                 <img class="rounded-circle bg-dark" width="50" height="50" src="src/account/img/<?= $result['foto_masyarakat'] ?>">
                                             </div>
                                             <input type="hidden" name="id_masyarakat" value="<?= $result['id_masyarakat'] ?>">
-                                            <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" placeholder="NIK" name="nik" value="<?= $result['nik'] ?>" required>
-                                                <label>NIK</label>
-                                            </div>
-                                            <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" placeholder="Nama" name="nama" value="<?= $result['nama'] ?>" required>
-                                                <label>Nama</label>
-                                            </div>
-                                            <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" placeholder="Username" name="username" value="<?= $result['username'] ?>" required>
-                                                <label>Username</label>
-                                            </div>
-                                            <div class="form-floating mb-3">
-                                                <input type="password" class="form-control" placeholder="Password" name="password" value="<?= $result['password'] ?>" disabled required>
-                                                <label>Password</label>
-                                            </div>
-                                            <div class="form-floating mb-3">
-                                                <input type="number" class="form-control" placeholder="Telp" name="telp" value="<?= $result['telp'] ?>" required>
-                                                <label>Telp</label>
-                                            </div>
+                                            <input type="hidden" class="form-control" placeholder="NIK" name="nik" value="<?= $result['nik'] ?>" required>
+                                            <input type="hidden" class="form-control" placeholder="Nama" name="nama" value="<?= $result['nama'] ?>" required>
+                                            <input type="hidden" class="form-control" placeholder="Username" name="username" value="<?= $result['username'] ?>" required>
+                                            <input type="hidden" class="form-control" placeholder="Password" name="password" value="<?= $result['password'] ?>" required>
+                                            <input type="hidden" class="form-control" placeholder="Telp" name="telp" value="<?= $result['telp'] ?>" required>
+                                            <p class="fw-bold text-center"><?= $result['nama'] ?></p>
+                                            <label>Blokir</label>
+                                            <select class="form-select mb-3" name="blokir" required>
+                                                <option><?= $result['blokir'] ?></option>
+                                                <option value="No">No</option>
+                                                <option value="Yes">Yes</option>
+                                            </select>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -199,6 +170,7 @@ if (isset($_POST['delete'])) {
                                     </div>
                                     <form method="post" action="">
                                         <input type="hidden" name="nik" value="<?= $result['nik'] ?>">
+                                        <input type="hidden" name="foto" value="<?= $result['foto_masyarakat'] ?>">
                                         <div class="modal-body text-center">
                                             <p>Apakah anda yakin ingin menghapus data ini? <br>
                                                 <span class="fw-bold text-danger"><?= $result['nama'] ?></span>
@@ -216,50 +188,7 @@ if (isset($_POST['delete'])) {
                     <?php endwhile; ?>
                 </tbody>
             </table>
-            <div class="btn btn-success px-4" data-bs-toggle="modal" data-bs-target="#insertModal"><i class="fa-solid fa-plus"></i></i></div>
         </div>
-
-        <!-- Insert Modal -->
-        <div class="modal fade" id="insertModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-scrollable">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Add</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form method="post" action="">
-                        <div class="modal-body">
-                            <input type="hidden" name="id_masyarakat" value="<?= $result['id_masyarakat'] ?>">
-                            <div class="form-floating mb-3">
-                                <input type="number" class="form-control" placeholder="NIK" name="nik" required>
-                                <label>NIK</label>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control" placeholder="Nama" name="nama" required>
-                                <label>Nama</label>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control" placeholder="Username" name="username" required>
-                                <label>Username</label>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <input type="password" class="form-control" placeholder="Password" name="password" required>
-                                <label>Password</label>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <input type="number" class="form-control" placeholder="Telp" name="telp" required>
-                                <label>Telp</label>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" name="add">Add</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <!-- Insert Modal -->
     </div>
 </body>
 

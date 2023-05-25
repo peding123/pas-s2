@@ -12,67 +12,68 @@ if (isset($_POST['submit'])) {
     if (empty($nik) || empty($nama) || empty($username) || empty($password) || empty($telp)) {
         $empty = "Data tidak boleh ada yang kosong!";
     } else {
-        $check_query = mysqli_query($conn, "SELECT * FROM masyarakat WHERE nik = '$nik'");
-        if (mysqli_num_rows($check_query) > 0) {
-            $error = "NIK sudah terdaftar cobalah NIK yang lain!";
+        if (strlen($nik) != 16) {
+            $nik_error = "NIK harus terdiri dari 16 digit!";
         } else {
-            if ($_FILES['file']['name'] != '') {
-                $direktori = "src/account/img/";
-                $file_name = $_FILES['file']['name'];
-                $file_size = $_FILES['file']['size'];
-
-                $allowed_extensions = array("jpg", "jpeg", "png");
-                $allowed_file_size = 2 * 1024 * 1024; // 2 MB
-
-                // Validasi ekstensi file
-                $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
-                if (!in_array($file_extension, $allowed_extensions)) {
-                    echo "<script>
-                            alert('Ekstensi file yang diunggah tidak valid. Hanya file dengan ekstensi JPG, JPEG, dan PNG yang diperbolehkan.');
-                            document.location='signup.php';
-                        </script>";
-                    exit;
-                }
-
-                // Validasi ukuran file
-                if ($file_size > $allowed_file_size) {
-                    echo "<script>
-                            alert('Ukuran file yang diunggah melebihi batas maksimal 2 MB.');
-                            document.location='signup.php';
-                        </script>";
-                    exit;
-                }
-
-                if (file_exists($direktori . $file_name)) {
-                    unlink($direktori . $file_name);
-                }
-                move_uploaded_file($_FILES['file']['tmp_name'], $direktori . $file_name);
+            $check_query = mysqli_query($conn, "SELECT * FROM masyarakat WHERE nik = '$nik'");
+            if (mysqli_num_rows($check_query) > 0) {
+                $error = "NIK sudah terdaftar cobalah NIK yang lain!";
             } else {
-                $direktori = "src/account/img/";
-                $default_image = "src/assets/img/UserImage.png";
-                $file_name = "UserImage.png";
-                if (!is_dir($direktori)) {
-                    mkdir($direktori, 0755, true);
+                if ($_FILES['file']['name'] != '') {
+                    $direktori = "src/account/img/";
+                    $file_name = $_FILES['file']['name'];
+                    $file_size = $_FILES['file']['size'];
+
+                    $allowed_extensions = array("jpg", "jpeg", "png");
+                    $allowed_file_size = 2 * 1024 * 1024; // 2 MB
+
+                    // Validasi ekstensi file
+                    $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+                    if (!in_array($file_extension, $allowed_extensions)) {
+                        echo "<script>
+                                alert('Ekstensi file yang diunggah tidak valid. Hanya file dengan ekstensi JPG, JPEG, dan PNG yang diperbolehkan.');
+                                document.location='signup.php';
+                            </script>";
+                        exit;
+                    }
+
+                    // Validasi ukuran file
+                    if ($file_size > $allowed_file_size) {
+                        echo "<script>
+                                alert('Ukuran file yang diunggah melebihi batas maksimal 2 MB.');
+                                document.location='signup.php';
+                            </script>";
+                        exit;
+                    }
+
+                    if (file_exists($direktori . $file_name)) {
+                        unlink($direktori . $file_name);
+                    }
+                    move_uploaded_file($_FILES['file']['tmp_name'], $direktori . $file_name);
+                } else {
+                    $direktori = "src/account/img/";
+                    $default_image = "src/assets/img/UserImage.png";
+                    $file_name = "UserImage.png";
+                    if (!is_dir($direktori)) {
+                        mkdir($direktori, 0755, true);
+                    }
+                    if (file_exists($direktori . $file_name)) {
+                        unlink($direktori . $file_name);
+                    }
+                    copy($default_image, $direktori . $file_name);
                 }
-                if (file_exists($direktori . $file_name)) {
-                    unlink($direktori . $file_name);
+                $query = mysqli_query($conn, "INSERT INTO masyarakat VALUES ('', '$nik', '$nama', '$username', '$password', '$telp', 'Masyarakat', '$file_name', 'No')");
+                if ($query) {
+                    echo "<script>
+                                alert('Register berhasil! silahkan login untuk melanjutkan');
+                                document.location='login.php';
+                            </script>";
+                } else {
+                    echo "<script>
+                                alert('Register gagal! silahkan coba lagi');
+                                document.location='signup.php';
+                            </script>";
                 }
-                copy($default_image, $direktori . $file_name);
-            }
-
-
-            $query = mysqli_query($conn, "INSERT INTO masyarakat VALUES ('', '$nik', '$nama', '$username', '$password', '$telp', 'Masyarakat', '$file_name')");
-
-            if ($query) {
-                echo "<script>
-                            alert('Register berhasil! silahkan login untuk melanjutkan');
-                            document.location='login.php';
-                        </script>";
-            } else {
-                echo "<script>
-                            alert('Register gagal! silahkan coba lagi');
-                            document.location='signup.php';
-                        </script>";
             }
         }
     }
@@ -130,6 +131,9 @@ if (isset($_POST['submit'])) {
                     <?php endif; ?>
                     <?php if (isset($error)) : ?>
                         <p style="color: #f9322c; font-style: italic;"><?= $error; ?></p>
+                    <?php endif; ?>
+                    <?php if (isset($nik_error)) : ?>
+                        <p style="color: #f9322c; font-style: italic;"><?= $nik_error; ?></p>
                     <?php endif; ?>
                 </div>
                 <button type="submit" class="btn btn-primary w-100 mt-2" name="submit">Register</button>

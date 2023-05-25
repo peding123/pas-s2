@@ -57,10 +57,9 @@ if ($level == "Masyarakat") {
 </head>
 
 <body>
-
     <div class="wrapper">
         <div class="row">
-            <div class="col-md-2 menu-side bg-dark text-light px-4 rounded">
+            <div class="col-md-2 menu-side bg-dark text-light rounded">
                 <?php include "menu.php" ?>
             </div>
             <div class="col-md-10 bg-body-secondary">
@@ -91,9 +90,7 @@ if ($level == "Masyarakat") {
                     </div>
                 </nav>
                 <div class="content-side mt-3">
-                    <div id="content">
-                        <?php include "content.php"; ?>
-                    </div>
+                    <div id="content"><?php include "content.php"; ?></div>
                 </div>
             </div>
         </div>

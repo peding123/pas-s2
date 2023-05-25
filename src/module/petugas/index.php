@@ -21,7 +21,18 @@ if (isset($_POST['add'])) {
     $telp = htmlspecialchars($_POST['telp']);
     $level = htmlspecialchars($_POST['level']);
 
-    $query = mysqli_query($conn, "INSERT INTO petugas VALUES ('', '$nama_petugas', '$username', '$password', '$telp', '$level')");
+    $direktori = "src/account/img/";
+    $default_image = "src/assets/img/UserImage.png";
+    $file_name = "UserImage.png";
+
+    if (!is_dir($direktori)) {
+        mkdir($direktori, 0755, true);
+    }
+
+    // Copy the default profile photo to the petugas directory
+    copy($default_image, $direktori . $file_name);
+
+    $query = mysqli_query($conn, "INSERT INTO petugas (nama_petugas, username, password, telp, level, blokir, foto_petugas) VALUES ('$nama_petugas', '$username', '$password', '$telp', '$level', 'No', '$file_name')");
 
     if ($query) {
         echo "<script>
@@ -43,8 +54,9 @@ if (isset($_POST['edit'])) {
     $username = htmlspecialchars($_POST['username']);
     $telp = htmlspecialchars($_POST['telp']);
     $level = htmlspecialchars($_POST['level']);
+    $blokir = htmlspecialchars($_POST['blokir']);
 
-    $query = mysqli_query($conn, "UPDATE petugas SET nama_petugas = '$nama_petugas', username = '$username', telp = '$telp', level = '$level' WHERE id_petugas = '$_POST[id_petugas]'");
+    $query = mysqli_query($conn, "UPDATE petugas SET nama_petugas = '$nama_petugas', username = '$username', telp = '$telp', level = '$level', blokir = '$blokir' WHERE id_petugas = '$_POST[id_petugas]'");
 
     if ($query) {
         echo "<script>
@@ -62,6 +74,10 @@ if (isset($_POST['edit'])) {
 
 // Delete
 if (isset($_POST['delete'])) {
+    $foto = $_POST['foto'];
+    $direktori = "src/account/img/";
+
+    unlink($direktori . $foto);
 
     $query = mysqli_query($conn, "DELETE FROM petugas WHERE id_petugas = '$_POST[id_petugas]'");
 
@@ -120,6 +136,7 @@ if (isset($_POST['delete'])) {
                         <th scope="col">Password</th>
                         <th scope="col">No. Telp</th>
                         <th scope="col">Level</th>
+                        <th scope="col">Blokir</th>
                         <th scope="col" class="text-center">Action</th>
                     </tr>
                 </thead>
@@ -133,6 +150,7 @@ if (isset($_POST['delete'])) {
                             <td><?= $result["password"] ?></td>
                             <td><?= $result["telp"] ?></td>
                             <td><?= $result["level"] ?></td>
+                            <td><?= $result["blokir"] ?></td>
                             <td>
                                 <div class='text-center'>
                                     <a href="#" data-bs-toggle="modal" data-bs-target="#editModal<?= $no ?>" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a> |
@@ -154,26 +172,22 @@ if (isset($_POST['delete'])) {
                                             <div class="text-center mb-3">
                                                 <img class="rounded-circle bg-dark" width="50" height="50" src="src/account/img/<?= $result['foto_petugas'] ?>">
                                             </div>
-                                            <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" placeholder="nama_petugas" name="nama_petugas" value="<?= $result['nama_petugas'] ?>" required>
-                                                <label>Nama</label>
-                                            </div>
-                                            <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" placeholder="Username" name="username" value="<?= $result['username'] ?>" required>
-                                                <label>Username</label>
-                                            </div>
-                                            <div class="form-floating mb-3">
-                                                <input type="password" class="form-control" placeholder="Password" name="password" value="<?= $result['password'] ?>" disabled required>
-                                                <label>Password</label>
-                                            </div>
-                                            <div class="form-floating mb-3">
-                                                <input type="number" class="form-control" placeholder="Telp" name="telp" value="<?= $result['telp'] ?>" required>
-                                                <label>Telp</label>
-                                            </div>
-                                            <select class="form-select" name="level" value="<?= $result['nama_petugas'] ?>" required>
-                                                <option value="<?= $result['level'] ?>"><?= $result['level'] ?></option>
+                                            <input type="hidden" class="form-control" placeholder="nama_petugas" name="nama_petugas" value="<?= $result['nama_petugas'] ?>" required>
+                                            <input type="hidden" class="form-control" placeholder="Username" name="username" value="<?= $result['username'] ?>" required>
+                                            <input type="hidden" class="form-control" placeholder="Password" name="password" value="<?= $result['password'] ?>" disabled required>
+                                            <input type="hidden" class="form-control" placeholder="Telp" name="telp" value="<?= $result['telp'] ?>" required>
+                                            <p class="fw-bold text-center"><?= $result['nama_petugas'] ?></p>
+                                            <label>Level</label>
+                                            <select class="form-select mb-3" name="level" required>
+                                                <option><?= $result['level'] ?></option>
                                                 <option value="Admin">Admin</option>
                                                 <option value="Petugas">Petugas</option>
+                                            </select>
+                                            <label>Blokir</label>
+                                            <select class="form-select mb-3" name="blokir" required>
+                                                <option><?= $result['blokir'] ?></option>
+                                                <option value="No">No</option>
+                                                <option value="Yes">Yes</option>
                                             </select>
                                         </div>
                                         <div class="modal-footer">
@@ -196,6 +210,7 @@ if (isset($_POST['delete'])) {
                                     </div>
                                     <form method="post" action="">
                                         <input type="hidden" name="id_petugas" value="<?= $result['id_petugas'] ?>">
+                                        <input type="hidden" name="foto" value="<?= $result['foto_petugas'] ?>">
                                         <div class="modal-body text-center">
                                             <p>Apakah anda yakin ingin menghapus data ini? <br>
                                                 <span class="fw-bold text-danger"><?= $result['nama_petugas'] ?></span>
