@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 21, 2023 at 04:39 PM
+-- Generation Time: May 26, 2023 at 12:45 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -35,8 +35,16 @@ CREATE TABLE `masyarakat` (
   `password` varchar(32) NOT NULL,
   `telp` varchar(13) NOT NULL,
   `level` enum('Masyarakat') NOT NULL,
-  `foto_masyarakat` varchar(255) NOT NULL
+  `foto_masyarakat` varchar(255) NOT NULL,
+  `blokir` varchar(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `masyarakat`
+--
+
+INSERT INTO `masyarakat` (`id_masyarakat`, `nik`, `nama`, `username`, `password`, `telp`, `level`, `foto_masyarakat`, `blokir`) VALUES
+(31, '7977644317953226', '123', '123', '202cb962ac59075b964b07152d234b70', '123', 'Masyarakat', 'UserImage.png', 'Yes');
 
 -- --------------------------------------------------------
 
@@ -47,6 +55,7 @@ CREATE TABLE `masyarakat` (
 CREATE TABLE `module` (
   `id_modul` int(11) NOT NULL,
   `nama_modul` varchar(50) NOT NULL,
+  `icon` varchar(50) NOT NULL,
   `link` varchar(100) NOT NULL,
   `static_content` text NOT NULL,
   `gambar` varchar(100) NOT NULL,
@@ -61,15 +70,15 @@ CREATE TABLE `module` (
 -- Dumping data for table `module`
 --
 
-INSERT INTO `module` (`id_modul`, `nama_modul`, `link`, `static_content`, `gambar`, `publish`, `status`, `aktif`, `urutan`, `link_seo`) VALUES
-(2, 'Petugas', '?module=datapetugas', 'Hello', '', 'Y', 'Admin', 'Y', 5, ''),
-(3, 'Home', '?module=home', 'Hello', '', 'Y', 'All', 'Y', 2, ''),
-(4, 'Pengaduan', '?module=pengaduan', 'Hello', '', 'Y', 'Petugas', 'Y', 6, ''),
-(5, 'Tanggapan', '?module=tanggapan', 'Hello', '', 'Y', 'Petugas', 'Y', 7, ''),
-(7, 'Masyarakat', '?module=datamasyarakat', 'Hello', '', 'Y', 'Admin', 'Y', 4, ''),
-(9, 'Dashboard', '?module=dashboard', 'Hello', '', 'Y', 'All', 'Y', 1, ''),
-(10, 'Pengaduan', '?module=pmasyarakat', 'Hello', '', 'Y', 'Masyarakat', 'Y', 8, ''),
-(11, 'Tanggapan', '?module=tmasyarakat', 'Hello', '', 'Y', 'Masyarakat', 'Y', 9, '');
+INSERT INTO `module` (`id_modul`, `nama_modul`, `icon`, `link`, `static_content`, `gambar`, `publish`, `status`, `aktif`, `urutan`, `link_seo`) VALUES
+(2, 'Petugas', '<i class=\"fa-solid fa-user\"></i>', '?module=datapetugas', 'Hello', '', 'Y', 'Admin', 'Y', 5, ''),
+(3, 'Home', '<i class=\"fa-solid fa-house\"></i>', '?module=home', 'Hello', '', 'Y', 'All', 'Y', 2, ''),
+(4, 'Pengaduan', '<i class=\"fa-solid fa-pen-to-square\"></i>', '?module=pengaduan', 'Hello', '', 'Y', 'Petugas', 'Y', 6, ''),
+(5, 'Tanggapan', '<i class=\"fa-solid fa-reply\"></i>', '?module=tanggapan', 'Hello', '', 'Y', 'Petugas', 'Y', 7, ''),
+(7, 'Masyarakat', '<i class=\"fa-solid fa-users\"></i>', '?module=datamasyarakat', 'Hello', '', 'Y', 'Admin', 'Y', 4, ''),
+(9, 'Dashboard', '<i class=\"fa-solid fa-gauge\"></i>', '?module=dashboard', 'Hello', '', 'Y', 'All', 'Y', 1, ''),
+(10, 'Pengaduan', '<i class=\"fa-solid fa-pen-to-square\"></i>', '?module=pmasyarakat', 'Hello', '', 'Y', 'Masyarakat', 'Y', 8, ''),
+(11, 'Tanggapan', '<i class=\"fa-solid fa-reply\"></i>', '?module=tmasyarakat', 'Hello', '', 'Y', 'Masyarakat', 'Y', 9, '');
 
 -- --------------------------------------------------------
 
@@ -100,17 +109,18 @@ CREATE TABLE `petugas` (
   `password` varchar(32) NOT NULL,
   `telp` varchar(13) NOT NULL,
   `level` enum('Admin','Petugas') NOT NULL,
-  `foto_petugas` varchar(255) NOT NULL
+  `foto_petugas` varchar(255) NOT NULL,
+  `blokir` varchar(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `petugas`
 --
 
-INSERT INTO `petugas` (`id_petugas`, `nama_petugas`, `username`, `password`, `telp`, `level`, `foto_petugas`) VALUES
-(30, 'Mohamad Ferdiansyah', 'admin', '21232f297a57a5a743894a0e4a801fc3', '083851522259', 'Admin', 'Master (1).png'),
-(32, 'Nico Gunawan Purba', 'nico', '4118af4d1a8ac07d93f11ce4f3bf1f58', '087889225660', 'Petugas', 'Gold (1).png'),
-(34, 'Muhammad Ali Irfan', 'ali', '984d8144fa08bfc637d2825463e184fa', '081282741310', 'Petugas', 'Diamond (1).png');
+INSERT INTO `petugas` (`id_petugas`, `nama_petugas`, `username`, `password`, `telp`, `level`, `foto_petugas`, `blokir`) VALUES
+(30, 'Mohamad Ferdiansyah', 'admin', '21232f297a57a5a743894a0e4a801fc3', '083851522259', 'Admin', 'Master (1).png', 'No'),
+(32, 'Nico Gunawan Purba', 'nico', '4118af4d1a8ac07d93f11ce4f3bf1f58', '087889225660', 'Petugas', 'Gold (1).png', 'No'),
+(34, 'Muhammad Ali Irfan', 'ali', '984d8144fa08bfc637d2825463e184fa', '081282741310', 'Petugas', 'Diamond (1).png', 'No');
 
 -- --------------------------------------------------------
 
@@ -172,7 +182,7 @@ ALTER TABLE `tanggapan`
 -- AUTO_INCREMENT for table `masyarakat`
 --
 ALTER TABLE `masyarakat`
-  MODIFY `id_masyarakat` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id_masyarakat` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `module`
@@ -184,13 +194,13 @@ ALTER TABLE `module`
 -- AUTO_INCREMENT for table `pengaduan`
 --
 ALTER TABLE `pengaduan`
-  MODIFY `id_pengaduan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
+  MODIFY `id_pengaduan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=90;
 
 --
 -- AUTO_INCREMENT for table `petugas`
 --
 ALTER TABLE `petugas`
-  MODIFY `id_petugas` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id_petugas` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `tanggapan`
