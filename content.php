@@ -34,3 +34,6 @@ if ($_GET['module'] == 'tmasyarakat') {
 if ($_GET['module'] == 'account') {
     include "src/module/account/index.php";
 }
+if ($_GET['module'] == 'account/password.php') {
+    include "src/module/account/password.php";
+}

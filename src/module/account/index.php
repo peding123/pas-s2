@@ -111,9 +111,9 @@ if (isset($_POST['save'])) {
                             <div class="mb-3">
                                 <div class="justify-content-center align-items-center d-flex">
                                     <?php if ($level == "Masyarakat") : ?>
-                                        <img width="100" height="100" class="bg-dark rounded-circle float-end mb-3" src="src/account/img/<?php echo $result['foto_masyarakat']; ?>">
+                                        <img width="200" height="200" class="bg-dark rounded-circle float-end mb-3" src="src/account/img/<?php echo $result['foto_masyarakat']; ?>">
                                     <?php elseif ($level == "Admin" || $level == "Petugas") : ?>
-                                        <img width="100" height="100" class="bg-dark rounded-circle float-end mb-3" src="src/account/img/<?php echo $result['foto_petugas']; ?>">
+                                        <img width="200" height="200" class="bg-dark rounded-circle float-end mb-3" src="src/account/img/<?php echo $result['foto_petugas']; ?>">
                                     <?php endif; ?>
                                 </div>
                                 <input type="file" name="file" class="form-control" id="image">
@@ -123,6 +123,8 @@ if (isset($_POST['save'])) {
                                     <input type="hidden" name="fotolama" value="<?= $result['foto_petugas'] ?>">
                                 <?php endif; ?>
                             </div>
+                        </div>
+                        <div class="col">
                             <?php if ($level == "Masyarakat") : ?>
                                 <div class="form-floating mb-3">
                                     <input type="number" name="nik" id="nik" class="form-control" value="<?= $result['nik'] ?>" disabled>
@@ -145,24 +147,9 @@ if (isset($_POST['save'])) {
                                 <input type="number" name="telp" id="telp" class="form-control" value="<?= $result['telp'] ?>" required>
                                 <label>Telp</label>
                             </div>
-                        </div>
-                        <div class="col">
-                            <label class="mb-1">Change Password</label>
-                            <div class="form-floating mb-3">
-                                <input type="password" name="oldPassword" id="oldPassword" class="form-control">
-                                <label>Old Password</label>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <input type="password" name="newPassword" id="newPassword" class="form-control">
-                                <label>New Password</label>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <input type="password" name="confirmPassword" id="confirmPassword" class="form-control">
-                                <label>Confirm Password</label>
-                            </div>
                             <div class="row">
                                 <div class="col">
-                                    <a href="?module=home" class="btn btn btn-danger w-100"><i class="fa-solid fa-xmark"></i></a>
+                                    <a href="?module=account/password.php" class="btn btn btn-danger w-100"><i class="fa-solid fa-key"></i></a>
                                 </div>
                                 <div class="col">
                                     <button type="submit" class="btn btn-warning w-100" name="save"><i class="fa-solid fa-floppy-disk"></i></button>
